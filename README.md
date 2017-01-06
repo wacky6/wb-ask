@@ -4,6 +4,12 @@
 
 ## Build Setup
 
+Add hostname resolution to hosts
+```
+### change 127.0.0.1 to whatever testing server you are using
+127.0.0.1 wb-ask-server
+```
+
 ``` bash
 # install dependencies
 npm install
