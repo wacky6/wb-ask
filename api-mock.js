@@ -38,7 +38,7 @@ Users.post(  '/user/', function*() {
     /*
      * Request JSON, mostly DATA_USER: {
      *     id,
-     *     nickname,
+     *     username,
      *     email,
      *     name,
      *     gender,
@@ -46,14 +46,14 @@ Users.post(  '/user/', function*() {
      *     password
      * }
      */
-    if (this.request.body.nickname !== 'error') {
+    if (this.request.body.username !== 'error') {
         // success
         this.status = 201
         this.body = {}
     } else {
-        // failure: user already exists
-        this.status = 409
-        this.body = {}
+        // failure: validation error
+        this.status = 400
+        this.body = { error: '注册失败' }
     }
 })
 

@@ -21,4 +21,9 @@ const globalStateStorage = new Vuex.Store({
 
 })
 
+// class mixins for convenience
+function user() { return this.$store.state.user }
+function loggedOn() { return Boolean(this.$store.state.user) }
+
 export default globalStateStorage
+export {user, loggedOn}

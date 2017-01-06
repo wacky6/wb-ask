@@ -3,44 +3,31 @@
     <el-popover
       ref="popover-login"
       v-model="loginPopoverVisible"
+      popper-class="popover-login-form"
     >
-      <form class="popover-login-form">
-        <label class="field">
-          <span class="field-name">用户名</span>
+      <form>
+        <form-field name="用户名">
           <el-input
             class="field-input"
             v-model="loginUsername"
             type="text"
-            placeholder="昵称 或 邮件地址"
+            placeholder="用户名 或 邮件地址"
             icon="information"
             autofocus
-            :disabled="busy || loggedOn"
-          ></el-input>
-        </label>
-        <label class="field">
-          <span class="field-name">密码</span>
+            :disabled="busy"
+          />
+        </form-field>
+
+        <form-field name="密码">
           <el-input
             class="field-input"
             v-model="loginPassword"
-            type="text"
+            type="password"
             placeholder="密码"
             icon="information"
-            :disabled="busy || loggedOn"
-          ></el-input>
-        </label>
-
-        <el-popover
-          ref="popover-login-alert"
-          trigger="manual"
-          v-model="loginErrorPopoverVisible"
-        >
-          <el-alert
-            title="用户名或密码不正确"
-            type="warning"
-            :closable="false"
+            :disabled="busy"
           >
-          </el-alert>
-        </el-popover>
+        </form-field>
 
         <div class="controls">
           <el-button
@@ -48,14 +35,14 @@
             type="success"
             icon="check"
             :loading="busy"
-            :disabled="loggedOn"
-            v-popover:popover-login-alert
+            :disabled="!valid"
             trigger="click"
             placement="down"
             @click="login()"
-          >
-            登录
-          </el-button>
+          > 登录 </el-button>
+        </div>
+        <div class="alert-wrap flex-lr" v-if="loginError">
+          <el-alert class="login-alert" type="warning" title="用户名或密码不正确" :closable="false"/>
         </div>
       </form>
     </el-popover>
@@ -69,44 +56,56 @@
           v-if="loggedOn"
           icon="close"
           @click="logout()"
-        >
-          退出
-        </el-button>
+        > 退出 </el-button>
       </div>
-      <el-button
-        v-show="!loggedOn"
-        v-popover:popover-login
-        placement="down"
-        icon="information"
-        type="primary"
-      >
-        登录
-      </el-button>
+
+      <div v-show="!loggedOn">
+        <el-button
+          v-show="!loggedOn"
+          v-popover:popover-login
+          placement="down"
+          icon="information"
+          type="primary"
+        > 登录 </el-button>
+        <el-button
+          class="btn register"
+          type="info"
+          icon="plus"
+          :loading="busy"
+          :disabled="loggedOn"
+          @click="$router.push('/register')"
+        > 注册 </el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {Input, Button, Popover} from 'element-ui'
+import FormField from './FormField.vue'
+import {user, loggedOn} from '../global-states.js'
 
 export default {
   name: 'login-ctrl',
+  components: { FormField },
   data: ()=>({
-    loginUsername: '',
-    loginPassword: '',
+    loginUsername: null,
+    loginPassword: null,
     loginPopoverVisible: false,
     loginError: null,
     busy: false
   }),
   computed: {
-    loggedOn() { return Boolean(this.user) },
-    user() { return this.$store.state.user },
-    loginErrorPopoverVisible() { return Boolean(this.loginError) }
+    user, loggedOn,
+    loginErrorPopoverVisible() { return Boolean(this.loginError) },
+    valid() { return this.loginUsername && this.loginPassword }
   },
   methods: {
     async login() {
       this.busy = true
       this.loginError = null
+
+      if (this.timeoutClearError)
+        clearTimeout(this.timeoutClearError)
 
       let {
         status = 0,
@@ -131,10 +130,13 @@ export default {
         this.loginError = '用户名或密码不正确'
       }
 
+      this.timeoutClearError = setTimeout( () => this.loginError = null, 3000 )
+
       this.busy = false
     },
     logout() {
       this.$store.commit('logout')
+      this.loginPassword = null
     }
   }
 }
@@ -151,6 +153,11 @@ export default {
     align-items: center
     justify-content: flex-end
     margin-top: 1em
+    margin-bottom: .5em
+  .alert-wrap
+    justify-content: flex-end
+    .login-alert
+      width: auto
 
 .login-ctrl
   .state
