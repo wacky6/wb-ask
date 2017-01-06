@@ -9,6 +9,7 @@ app.use( koaBody({ multipart: true }) )
 
 const Users = new Router()
 const Login = new Router()
+const Test = new Router()
 
 const DATA_USER = {
     nickname: 'nickname /昵称',
@@ -106,8 +107,24 @@ Users.get(   '/user', function*() {
     }
 })
 
+// 测试用接口
+Test.post(  '/okCharge', function*() {
+    // 一键充值
+    /*
+     * Request: {
+     *     jwt:   'login-token',  // 登录token
+     *     amount: 100,    // 数量
+     * }
+     */
+    this.status = 200
+    this.body = {
+        wealth: 200    // 充值完成后的财富点数
+    }
+})
+
 app.use( Users.routes() )
 app.use( Login.routes() )
+app.use( Test.routes() )
 
 module.exports = app.listen(8002, function(err) {
     if (err) {

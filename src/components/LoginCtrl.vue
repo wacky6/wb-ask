@@ -54,10 +54,7 @@
       placement="bottom"
       popper-class="popover-menu"
     >
-      <user-info-card
-        style="margin-bottom: .5em;"
-        :body-style="{ padding: '1em 2ch' }"
-      />
+      <slot></slot>
       <el-button
         type="danger"
         icon="close"
@@ -74,7 +71,6 @@
           v-popover:popover-menu
           type="info"
           :plain="true"
-          icon="star-on"
         > {{user.nickname}} </el-button>
       </div>
 
@@ -101,12 +97,11 @@
 
 <script>
 import FormField from './FormField.vue'
-import UserInfoCard from './UserInfoCard.vue'
 import {user, loggedOn} from '../global-states.js'
 
 export default {
   name: 'login-ctrl',
-  components: { FormField, UserInfoCard },
+  components: { FormField },
   data: ()=>({
     loginUsername: null,
     loginPassword: null,
@@ -145,6 +140,7 @@ export default {
       if (status === 200) {
         this.$store.commit('login', user, token)
         this.loginPopoverVisible = false
+        this.menuPopoverVisible = true
       }
 
       if (status === 403) {
@@ -190,4 +186,11 @@ export default {
     .nickname
       margin-left: 1ch
       margin-right: 1ch
+
+.el-button.golden
+  background-color: #FFC107
+  &:hover
+    background-color: #FFCA28
+  &:active
+    background-color: #FFB300
 </style>

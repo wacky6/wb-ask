@@ -16,6 +16,10 @@ const globalStateStorage = new Vuex.Store({
     logout(state) {
       state.user = null
       state.token = null
+    },
+    updateWealth(state, num) {
+      if (state.user)
+        state.user.wealth = num
     }
   },
 
@@ -24,6 +28,7 @@ const globalStateStorage = new Vuex.Store({
 // class mixins for convenience
 function user() { return this.$store.state.user || {} }
 function loggedOn() { return Boolean(this.$store.state.user) }
+function token() { return this.$store.state.token }
 
 export default globalStateStorage
-export {user, loggedOn}
+export {user, loggedOn, token}
