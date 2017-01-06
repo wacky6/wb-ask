@@ -45,7 +45,7 @@
       </form-field>
 
       <form-field name="性别">
-        <el-radio-group class="field-input radio flex-lr" v-model="gender">
+        <el-radio-group class="field-input radio flex-horz" v-model="gender">
           <el-radio label="M" :disabled="disabled">男</el-radio>
           <el-radio label="F" :disabled="disabled">女</el-radio>
         </el-radio-group>
@@ -77,7 +77,7 @@
       > 注册 </el-button>
     </div>
 
-    <div class="flex-lr alert-wrap">
+    <div class="flex-horz alert-wrap">
       <el-alert
         class="alert"
         v-if="Boolean(registerError)"
@@ -177,7 +177,7 @@ export default {
 </script>
 
 <style lang="styl">
-@import "./styles/flex-lr.styl";
+@import "./styles/flex-horz.styl";
 .register
   h2
     text-align: center

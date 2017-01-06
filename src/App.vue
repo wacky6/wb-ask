@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="header">
-      <router-link to="/" class="flex-lr logo">
+      <router-link to="/" class="flex-horz logo">
         <img class="logo-img" src="./assets/logo.png">
         <h1 class="title">问答系统</h1>
       </router-link>

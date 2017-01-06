@@ -1,9 +1,10 @@
 <template>
   <div class="login-ctrl">
+    <!-- Login Popover -->
     <el-popover
       ref="popover-login"
       v-model="loginPopoverVisible"
-      popper-class="popover-login-form"
+      popper-class="popover-login"
     >
       <form>
         <form-field name="邮箱">
@@ -39,22 +40,42 @@
             @click="login()"
           > 登录 </el-button>
         </div>
-        <div class="alert-wrap flex-lr" v-if="loginError">
+        <div class="alert-wrap flex-horz" v-if="loginError">
           <el-alert class="login-alert" type="warning" title="用户名或密码不正确" :closable="false"/>
         </div>
       </form>
     </el-popover>
 
+    <!-- Menu / State Popover -->
+    <el-popover
+      ref="popover-menu"
+      v-model="menuPopoverVisible"
+      trigger="click"
+      placement="bottom"
+      popper-class="popover-menu"
+    >
+      <user-info-card
+        style="margin-bottom: .5em;"
+        :body-style="{ padding: '1em 2ch' }"
+      />
+      <el-button
+        type="danger"
+        icon="close"
+        style="width: 100%;"
+        size="small"
+        @click="logout()"
+      > 退出登录 </el-button>
+    </el-popover>
+
     <div class="state">
-      <div v-show="loggedOn" class="flex-lr">
-        <span class="nickname">{{user ? user.nickname : ''}}</span>
+      <div v-show="loggedOn" class="flex-vert">
         <el-button
-          type="danger"
-          size="mini"
-          v-if="loggedOn"
-          icon="close"
-          @click="logout()"
-        > 退出 </el-button>
+          class="nickname"
+          v-popover:popover-menu
+          type="info"
+          :plain="true"
+          icon="star-on"
+        > {{user.nickname}} </el-button>
       </div>
 
       <div v-show="!loggedOn">
@@ -80,16 +101,18 @@
 
 <script>
 import FormField from './FormField.vue'
+import UserInfoCard from './UserInfoCard.vue'
 import {user, loggedOn} from '../global-states.js'
 
 export default {
   name: 'login-ctrl',
-  components: { FormField },
+  components: { FormField, UserInfoCard },
   data: ()=>({
     loginUsername: null,
     loginPassword: null,
     loginPopoverVisible: false,
     loginError: null,
+    menuPopoverVisible: false,
     busy: false
   }),
   computed: {
@@ -135,6 +158,7 @@ export default {
     logout() {
       this.$store.commit('logout')
       this.loginPassword = null
+      this.menuPopoverVisible = false
     }
   }
 }
@@ -142,9 +166,10 @@ export default {
 
 <style lang="stylus">
 @import "../styles/form";
-@import "../styles/flex-lr";
+@import "../styles/flex-horz";
+@import "../styles/flex-vert";
 
-.popover-login-form
+.popover-login
   .field
     .field-name
       width: 30px

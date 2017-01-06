@@ -16,7 +16,8 @@ const DATA_USER = {
     name:  '身份证姓名',
     gender: 'M',    // 'M' -> male, 'F' -> female
     birthday: '2000-01-01',    // ISO Date String
-    fund: 100    // Available Funds
+    wealth: 100,       // Wealth
+    goodanswer: 10     // number of Good answer
 }
 
 Users.get(   '/user/:uid', function*() {
