@@ -2,13 +2,13 @@
   <div class="register">
     <h2>注册</h2>
     <form>
-      <form-field name="用户名">
+
+      <form-field name="邮箱">
         <el-input
           class="field-input"
-          v-model="username"
+          v-model="email"
           type="text"
-          placeholder="用户名"
-          autofocus
+          placeholder="邮箱"
           :disabled="disabled"
         />
       </form-field>
@@ -23,12 +23,13 @@
         />
       </form-field>
 
-      <form-field name="邮箱">
+      <form-field name="昵称">
         <el-input
           class="field-input"
-          v-model="email"
+          v-model="nickname"
           type="text"
-          placeholder="邮箱"
+          placeholder="昵称"
+          autofocus
           :disabled="disabled"
         />
       </form-field>
@@ -55,7 +56,7 @@
           class="field-input"
           v-model="birthday"
           type="date"
-          placeholder="生日"
+          placeholder="请选择出生日期"
           :disabled="disabled"
         />
       </form-field>
@@ -71,6 +72,7 @@
         type="success"
         size="large"
         :loading="busy || registerSuccess"
+        :disabled="!formFilled"
         @click="register()"
       > 注册 </el-button>
     </div>
@@ -104,7 +106,7 @@ import EmailValidator from 'email-validator'
 export default {
   components: { FormField },
   data: () => ({
-    username: null,
+    nickname: null,
     email: null,
     password: null,
     passwordVerify: null,
@@ -117,7 +119,15 @@ export default {
   }),
   computed: {
     user, loggedOn,
-    disabled() { return this.busy || this.registerSuccess }
+    disabled() { return this.busy || this.registerSuccess },
+    formFilled() {
+      return this.nickname
+          && EmailValidator.validate(this.email)
+          && this.password
+          && this.name
+          && this.gender === 'M' || this.gender === 'F'
+          && this.birthday
+    }
   },
   watch: {
     loggedOn(val) {
@@ -129,7 +139,7 @@ export default {
     async register() {
       this.busy = true
       let payload = {
-        username: this.username,
+        nickname: this.nickname,
         email:    this.email,
         password: this.password,
         name:     this.name,
@@ -154,7 +164,7 @@ export default {
       }
     },
     clearFields() {
-      this.username = null
+      this.nickname = null
       this.email = null
       this.password = null
       this.passwordVerify = null
@@ -169,6 +179,11 @@ export default {
 <style lang="styl">
 @import "./styles/flex-lr.styl";
 .register
+  h2
+    text-align: center
+  .field
+    .field-name
+      width: 80px
   .field-input
     width: 180px
     &.radio

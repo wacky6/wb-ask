@@ -11,9 +11,8 @@ const Users = new Router()
 const Login = new Router()
 
 const DATA_USER = {
-    id: 1,
     nickname: 'nickname /昵称',
-    email: 'someone@example.com',
+    email: 'someone@example.com',    // 登录凭证
     name:  '身份证姓名',
     gender: 'M',    // 'M' -> male, 'F' -> female
     birthday: '2000-01-01',    // ISO Date String
@@ -22,7 +21,7 @@ const DATA_USER = {
 
 Users.get(   '/user/:uid', function*() {
     // return user information
-    if (this.params.uid !== 0) {
+    if (this.params.uid) {
         // success
         this.status = 200
         this.body = DATA_USER
@@ -37,16 +36,15 @@ Users.post(  '/user/', function*() {
     // register new user
     /*
      * Request JSON, mostly DATA_USER: {
-     *     id,
-     *     username,
      *     email,
+     *     nickname,
      *     name,
      *     gender,
      *     birthday,
      *     password
      * }
      */
-    if (this.request.body.username !== 'error') {
+    if (this.request.body.email !== 'error') {
         // success
         this.status = 201
         this.body = {}
@@ -61,7 +59,7 @@ Login.post(  '/login', function*() {
     // Login
     /*
      * Request: JSON {
-     *    user: nickname / email
+     *    user: email
      *    password: plain-text password
      * }
      */
@@ -77,6 +75,32 @@ Login.post(  '/login', function*() {
         this.status = 403
         this.body = {
             error: "error message"
+        }
+    }
+})
+
+Users.get(   '/user', function*() {
+    // 用户查询、筛选
+    // 目前仅用来返回首页土豪榜
+    /*
+     * Query:
+     *     limit: 10    (number) 返回的结果数量
+     *     condition: 'top'
+     */
+    if (this.request.query.condition === 'top') {
+        // 土豪榜
+        // eg: GET    /user ? condition=top & limit=10
+        this.status = 200
+        this.body = {
+            list: [    // limit个如下格式的用户信息
+                {
+                    nickname:   '用户名',
+                    avatar:     '头像',
+                    wealth:     100,    // 财富值
+                    goodanswer: 10,     // 采纳的回答数
+                    gender:     'F'     // 性别
+                }
+            ]
         }
     }
 })

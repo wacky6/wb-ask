@@ -6,13 +6,12 @@
       popper-class="popover-login-form"
     >
       <form>
-        <form-field name="用户名">
+        <form-field name="邮箱">
           <el-input
             class="field-input"
             v-model="loginUsername"
             type="text"
-            placeholder="用户名 或 邮件地址"
-            icon="information"
+            placeholder="邮箱"
             autofocus
             :disabled="busy"
           />
@@ -24,7 +23,6 @@
             v-model="loginPassword"
             type="password"
             placeholder="密码"
-            icon="information"
             :disabled="busy"
           >
         </form-field>
@@ -147,6 +145,9 @@ export default {
 @import "../styles/flex-lr";
 
 .popover-login-form
+  .field
+    .field-name
+      width: 30px
   .controls
     display: flex
     flex-direction: row
