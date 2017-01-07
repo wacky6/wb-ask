@@ -123,31 +123,39 @@ export default {
       if (this.timeoutClearError)
         clearTimeout(this.timeoutClearError)
 
-      let {
-        status = 0,
-        body: {
-          user = {},
-          jwt = null,
-          error = null
+      try {
+        let {
+          status = 0,
+          body: {
+            user = {},
+            jwt = null,
+            error = null
+          }
+        } = await this.$agent.post('/api/login')
+            .send({
+              user: this.loginUsername,
+              password: this.loginPassword
+            })
+            .ok( ({status}) => status === 200 || status === 403 )
+        if (status === 200) {
+          this.$store.commit('login', {user, token: jwt})
+          this.loginPopoverVisible = false
+          this.menuPopoverVisible = true
         }
-      } = await this.$agent.post('/api/login')
-          .send({
-            user: this.loginUsername,
-            password: this.loginPassword
-          })
-          .ok( ({status}) => status === 200 || status === 403 )
-
-      if (status === 200) {
-        this.$store.commit('login', user, jwt)
-        this.loginPopoverVisible = false
-        this.menuPopoverVisible = true
+        if (status === 403) {
+          this.loginError = '用户名或密码不正确'
+        }
+        this.timeoutClearError = setTimeout( () => this.loginError = null, 3000 )
+      } catch(e) {
+        this.$notify({
+          type: 'error',
+          title: '错误',
+          message: '服务器故障：'+e.message
+        })
+        console.log(e)
       }
 
-      if (status === 403) {
-        this.loginError = '用户名或密码不正确'
-      }
 
-      this.timeoutClearError = setTimeout( () => this.loginError = null, 3000 )
 
       this.busy = false
     },

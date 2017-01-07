@@ -9,7 +9,7 @@ const globalStateStorage = new Vuex.Store({
     token: null
   },
   mutations: {
-    login(state, user, token) {
+    login(state, {user, token}) {
       state.user = user
       state.token = token
     },

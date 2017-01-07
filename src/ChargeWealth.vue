@@ -15,6 +15,7 @@ export default {
   data: ()=>({
     loading: false
   }),
+  computed: { token },
   methods: {
     async okCharge(num) {
       this.loading = true
@@ -23,7 +24,7 @@ export default {
           status = 0,
           body: { wealth, error }
         } = await this.$agent.post('/api/okCharge')
-                  .send({ jwt: token, amount: num })
+                  .send({ jwt: this.token, amount: num })
         if (status === 200) {
           this.$store.commit('updateWealth', wealth)
           this.$notify({

@@ -11,7 +11,8 @@ export default {
 }
 </script>
 
-<style lang="styl">
+<style lang="stylus">
+.field
   .field-name
     text-align: right
 </style>

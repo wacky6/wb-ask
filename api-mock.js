@@ -9,6 +9,7 @@ app.use( koaBody({ multipart: true }) )
 
 const Users = new Router()
 const Login = new Router()
+const Question = new Question()
 const Test = new Router()
 
 const DATA_USER = {
@@ -51,9 +52,9 @@ Users.post(  '/user/', function*() {
         this.status = 201
         this.body = {}
     } else {
-        // failure: validation error
+        // failure: z
         this.status = 400
-        this.body = { error: '注册失败' }
+        this.body = { error: '注册失败的原因（eg：昵称已存在，用户已注册）' }
     }
 })
 
@@ -105,6 +106,21 @@ Users.get(   '/user', function*() {
             ]
         }
     }
+})
+
+Question.post(  '/question', function*() {
+    // 创建问题
+    /*
+     * Request: {
+     *     jwt:    'login-token',
+     *     question: {    // 问题信息
+     *         title:   '标题'
+     *         content: '问题正文；目前来说，直接存数据库'
+     *         tags:    ['标签1', '标签2']    // 如果问题没有标签，为空数组: []
+     *         bounty:  100,      //悬赏数
+     *     }
+     * }
+     */
 })
 
 // 测试用接口
