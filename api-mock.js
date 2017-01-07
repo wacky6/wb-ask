@@ -9,7 +9,7 @@ app.use( koaBody({ multipart: true }) )
 
 const Users = new Router()
 const Login = new Router()
-const Question = new Question()
+const Question = new Router()
 const Test = new Router()
 
 const DATA_USER = {
@@ -123,6 +123,71 @@ Question.post(  '/question', function*() {
      */
 })
 
+Question.get(  '/question/:qid', function*() {
+    // 获取问题，问题浏览次数+1
+    if (this.params.qid !== 404) {
+        this.status = 200
+        this.body = {
+            title: '问题标题',
+            content: '* 如何调戏星星\n* 如何勾搭星星',
+            tags: ['标签1', '标签2'],
+            numAnswer: 10,  // 回答数
+            numVisit: 1000, // 访问次数
+            closed: false,  // 问题是否关闭
+            bounty: 100,    // 悬赏
+            created: 1483773606376,    // 问题的毫秒时间戳
+            user: {    // 问题发布者的信息
+                nickname: '昵称',
+                email:    'someone@example.com',
+                avatar:   'avatar'
+            }
+        }
+    } else {
+        this.status = 404
+        this.body = {}
+    }
+})
+
+Question.get(  '/question/:qid/answers', function*() {
+    // 获得问题qid的答案
+    /*
+     * Query: {
+     *     page: 1,    // 分页，从1开始。如有最佳答案，需在第一页返回
+     *     user: 'someone@example.com',    // 用户名（邮箱）
+     * }
+     *
+     * Response: {
+     *     list: [     // 答案数组, 没有回答为空数组 []
+     *         {
+     *             aid: 'answer-id',      // 回答的ID
+     *             content: '回答',
+     *             created: 1483773606376,  // 回答的毫秒时间戳
+     *             best: false,    //是否为最佳回答
+     *             upvote: 10,    // 点赞数
+     *             downvote: 1,   // 差评数
+     *             voted: false,  // 用户user 是否已经对这个回答给出评分
+     *             user: {    // 回答者的信息
+     *                 nickname: '回答者昵称',
+     *                 email:  'someone@example.com',
+     *                 avatar: 'avatar"
+     *             }
+     *         }
+     *     ]
+     * }
+     */
+     this.status = 200
+     this.body = {
+         list: [
+             { content: '回答1', created: 1483773606376, best: true,
+               user: { nickname: '教授', email: 'professor@example.com', avatar: 'avatar' }
+             },
+             { content: '回答2', created: 1483774000000, best: false,
+               user: { nickname: '小学生', email: 'student@example.com', avatar: 'avatar' }
+             }
+         ]
+     }
+})
+
 // 测试用接口
 Test.post(  '/okCharge', function*() {
     // 一键充值
@@ -141,6 +206,7 @@ Test.post(  '/okCharge', function*() {
 app.use( Users.routes() )
 app.use( Login.routes() )
 app.use( Test.routes() )
+app.use( Question.routes() )
 
 module.exports = app.listen(8002, function(err) {
     if (err) {

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Index from './Index.vue'
 import Register from './Register.vue'
 import NewQuestion from './NewQuestion.vue'
+import ViewQuestion from './ViewQuestion.vue'
 
 export default () => new VueRouter({
   mode: 'history',
@@ -10,6 +11,9 @@ export default () => new VueRouter({
   routes: [
     { path: '/', component: Index },
     { path: '/register', component: Register },
-    { path: '/new-question', component: NewQuestion }
+    { path: '/question/new',  component: NewQuestion },
+    { path: '/question/:qid', component: ViewQuestion }
+      // { path: '/view/:qid': component: ViewQuestion },
+      // { path: '/edit/:qid': component: EditQuestion },
   ]
 })

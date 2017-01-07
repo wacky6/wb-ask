@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="flex-vert">
     <div class="header">
       <router-link to="/" class="flex-horz logo">
         <img class="logo-img" src="./assets/logo.png">
@@ -53,12 +53,25 @@ export default {
 </script>
 
 <style lang="stylus">
+@import "styles/flex-vert.styl";
+html, body
+  min-height: 100vh
+  width: 100%
+  margin: 0
+  padding: 0
+body
+  display: flex
+  flex-direction: column
+  align-items: stretch
+  justify-content: stretch
 #app
+  flex-grow: 1
   .header
     display: flex
     flex-direction: row
     align-items: center
     justify-content: space-between
+    padding: .5em
     .logo, .logo:visited, .logo:hover, .logo:active
       text-decoration: none
       color: inherit
