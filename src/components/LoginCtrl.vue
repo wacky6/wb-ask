@@ -127,7 +127,7 @@ export default {
         status = 0,
         body: {
           user = {},
-          token = null,
+          jwt = null,
           error = null
         }
       } = await this.$agent.post('/api/login')
@@ -138,7 +138,7 @@ export default {
           .ok( ({status}) => status === 200 || status === 403 )
 
       if (status === 200) {
-        this.$store.commit('login', user, token)
+        this.$store.commit('login', user, jwt)
         this.loginPopoverVisible = false
         this.menuPopoverVisible = true
       }
