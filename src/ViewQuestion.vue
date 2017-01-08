@@ -17,18 +17,34 @@
     <div v-if="!error">
       <question-display :question="question">
         <!-- if is self question, insert 关闭问题，修改问题 controls -->
+        <div slot="controls" class="controls" v-if="userOwnsQuestion && !question.closed">
+          <el-button
+            type="warning"
+            size="small"
+            icon="more"
+            @click="editQuestion()"
+          > 修改问题 </el-button>
+          <el-button
+            type="danger"
+            size="small"
+            icon="close"
+            @click="closeQuestion()"
+          > 关闭问题 </el-button>
+        </div>
       </question-display>
 
-      <div class="answers">
+      <transition-group class="answers" name="answer" tag="div">
         <answer-display
+          :key="answer.aid"
           v-for="answer in fetchedAnswers"
           :answer="answer"
-          :showSelectBestAnswer="!bestAnswerSelected"
+          :enable-select-best="!bestAnswerSelected && !question.closed"
+          :show-select-best="userOwnsQuestion"
           @upvote="upvote(answer)"
           @downvote="downvote(answer)"
-          @bestAnswer="selectBest(answer)"
+          @selectAsBest="selectAsBest(answer)"
         />
-      </div>
+      </transition-group>
     </div>
 
   </div>
@@ -48,12 +64,19 @@ export default {
     question() {
       return {
         content: '',
+        user: { uid: null },
         ... this.preloadQuestion,
         ... (this.fetchedQuestion ? this.fetchedQuestion : {})
       }
     },
+    qid() {
+      return this.$route.params.qid
+    },
     bestAnswerSelected() {
       return this.fetchedAnswers.filter( $ => $.best ).length > 0
+    },
+    userOwnsQuestion() {
+      return this.user && this.user.uid === this.question.user.uid
     }
   },
   data() {
@@ -121,12 +144,89 @@ export default {
       }
       this.loading = false
       return !this.error
+    },
+    async rateAnswer(op) {
+      try {
+        let {
+          status,
+          body
+        } = await op.ok( ({status}) => (200<=status && status<300)
+                                    || (400<=status && status<500)
+                  )
+        if (status === 200 || status === 201) {
+          if (body.wealth)
+            this.$store.commit('updateWealth', body.wealth)
+          return body
+        }
+        if (status === 409) {
+          throw new Error(body.error || '您已评价过')
+        }
+      } catch(e) {
+        this.$notify({
+          type:  'warning',
+          title: '评价失败',
+          message: e.message
+        })
+        return null
+      }
+    },
+    async upvote(answer) {
+      let opUpvote = this.$agent.post(`/api/question/${this.qid}/upvote`)
+                     .send({ jwt: this.token })
+      if ( await this.rateAnswer( opUpvote ) ) {
+        answer.voted = 1
+        answer.upvote++
+      }
+    },
+    async downvote(answer) {
+      let opDownvote = this.$agent.post(`/api/question/${this.qid}/downvote`)
+                       .send({ jwt: this.token })
+      if ( await this.rateAnswer( opDownvote ) ) {
+        answer.voted = -1
+        answer.downvote++
+      }
+    },
+    async selectAsBest(answer) {
+      try {
+        await this.$confirm(`确定要选择${answer.user.nickname}的回答为最佳答案吗？`, '选为最佳答案')
+      }catch(e){
+        return    // user cancelled
+      }
+      let opSelectAsBest = this.$agent.post(`/api/question/${this.qid}/is-best`)
+                           .send({ jwt: this.token, isBest: true })
+      if ( await this.rateAnswer( opSelectAsBest ) ) {
+        answer.best = true
+        for (let i=0; i!==this.fetchedAnswers.length; ++i)
+          if (this.fetchedAnswers[i] === answer)
+            this.fetchedAnswers.unshift( ... this.fetchedAnswers.splice(i, 1) )
+        this.fetchedQuestion.closed = true
+        this.fetchedQuestion.solved = true
+      }
+    },
+    async closeQuestion() {
+      try {
+        await this.$confirm('确定要关闭问题吗？', '关闭问题')
+      }catch(e){
+        return    // user cancelled
+      }
+      let opCloseQuestion = this.$agent.post(`/api/question/${this.qid}/close`)
+                            .send({ jwt: this.token, close: true })
+      if ( await this.rateAnswer( opCloseQuestion ) ) {
+        this.fetchedQuestion.closed = true
+        this.$notify({
+          type: "success",
+          title: "问题已关闭"
+        })
+      }
+    },
+    editQuestion() {
+      // TOOD: redirect to question editor
+      //       set read-only for question title
     }
   },
   async mounted() {
-    let qid = this.$route.params.qid
-    if ( await this.fetchQuestion(qid) )
-      await this.fetchAnswers(qid)
+    if ( await this.fetchQuestion(this.qid) )
+      await this.fetchAnswers(this.qid)
   }
 }
 </script>
@@ -145,4 +245,6 @@ export default {
     margin-right: auto
   .answers
     margin-top: 2em
+  .answer-move
+    transition: transform 1s
 </style>

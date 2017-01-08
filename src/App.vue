@@ -63,7 +63,7 @@ body
   display: flex
   flex-direction: column
   align-items: stretch
-  justify-content: stretch
+  justify-content: center
 #app
   flex-grow: 1
   .header

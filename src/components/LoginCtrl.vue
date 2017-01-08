@@ -140,7 +140,6 @@ export default {
         if (status === 200) {
           this.$store.commit('login', {user, token: jwt})
           this.loginPopoverVisible = false
-          this.menuPopoverVisible = true
         }
         if (status === 403) {
           this.loginError = '用户名或密码不正确'

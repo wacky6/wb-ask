@@ -5,11 +5,20 @@
       <div class="brief">
         <div class="title flex-horz">
           <h2>{{ question.title }}</h2>
-          <el-tag
-            type="warning"
-            v-if="question.bounty > 0"
-            class="bounty"
-          > 悬赏：<strong>{{ question.bounty }}</strong> </el-tag>
+          <div class="hints">
+            <el-tag
+              type="warning"
+              v-if="question.bounty > 0"
+            > 悬赏：{{ question.bounty }} </el-tag>
+            <el-tag
+              type="danger"
+              v-if="question.closed && !question.solved"
+            > 已关闭 </el-tag>
+            <el-tag
+              type="success"
+              v-if="question.solved"
+            > 已解决 </el-tag>
+          </div>
         </div>
         <div class="num-of-visits"> 浏览次数：{{ question.numVisit }}</div>
         <tags-display :tags="question.tags" :click="gotoTag" />
@@ -36,6 +45,11 @@ import TagsDisplay from './TagsDisplay'
 export default {
   components: { UserDisplay, TimeAgo, TagsDisplay },
   props: ['question', 'user'],
+  computed: {
+    questionClosed() {
+      return this.question && this.question.closed
+    }
+  },
   data() {
     return {
       gotoTag: (tag) => { this.$router.push('/tag/'+tag) }
@@ -51,7 +65,7 @@ export default {
     flex-grow: 1
     .title
       align-items: center
-      .bounty
+      .hints
         margin-left: 4ch
       h2
         margin: 0

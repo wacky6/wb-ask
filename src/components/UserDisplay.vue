@@ -1,12 +1,20 @@
 <template>
-  <div class="user-display">
+  <div :class="className" >
     <div class="nickname">{{ user ? user.nickname : '' }}</div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['user']
+  props: ['user', 'type'],
+  computed: {
+    className() {
+      return {
+        'user-display': true,
+        'mini': this.type === 'mini'
+      }
+    }
+  }
 }
 </script>
 
@@ -15,4 +23,7 @@ export default {
   .nickname
     text-align: center
     margin: .3em
+  &.mini
+    display: inline-block
+    margin: 0
 </style>
