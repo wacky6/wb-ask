@@ -18,7 +18,7 @@
     <el-form-item label="问题描述" prop="content">
       <markdown-editor
         v-model="question.content"
-        placeholder
+        placeholder="请输入问题正文。支持Markdown语法。"
       />
     </el-form-item>
     <el-form-item label="问题标签" prop="tags">
