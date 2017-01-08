@@ -5,6 +5,7 @@
         <img class="logo-img" src="./assets/logo.png">
         <h1 class="title">问答系统</h1>
       </router-link>
+
       <login-ctrl class="login-ctrl">
         <div style="margin-bottom: .5em;">
           <user-info-card
@@ -26,7 +27,13 @@
         <charge-wealth />
       </el-dialog>
     </div>
-    <router-view></router-view>
+
+    <router-view class="container" />
+
+    <div class="footer">
+      <a href="https://github.com/wacky6/wb-ask"><h5>wacky6/wb-ask (C) 2017</h5></a>
+      <div class="powered-by">Powered by Vue2</div>
+    </div>
   </div>
 </template>
 
@@ -80,4 +87,20 @@ body
         margin-right: 1ch
       .title
         margin: 0;
+  .container
+    margin-bottom: 3em
+  .footer
+    padding: .2em 0
+    font-size: 9px
+    text-align: center
+    font-family: monospace
+    a, a:visited, a:hover
+      color: inherit
+      text-decoration: none
+    h5
+      margin: 0
+      font-weight: normal
+    .powered-by
+      color: #8492A6
+      font-size: 7px
 </style>
