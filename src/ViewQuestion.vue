@@ -220,8 +220,7 @@ export default {
       }
     },
     editQuestion() {
-      // TOOD: redirect to question editor
-      //       set read-only for question title
+      this.$router.push(`/question/${this.qid}/edit`)
     }
   },
   async mounted() {

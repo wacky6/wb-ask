@@ -31,8 +31,7 @@
     <router-view class="container" />
 
     <div class="footer">
-      <a href="https://github.com/wacky6/wb-ask"><h5>wacky6/wb-ask (C) 2017</h5></a>
-      <div class="powered-by">Powered by Vue2</div>
+      <a href="https://github.com/wacky6/wb-ask">wacky6/wb-ask - <span class="powered-by">powered by Vue2</span> - (C) 2017</a>
     </div>
   </div>
 </template>
@@ -89,6 +88,7 @@ body
         margin: 0;
   .container
     margin-bottom: 3em
+    flex-grow: 1
   .footer
     padding: .2em 0
     font-size: 9px

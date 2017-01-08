@@ -12,6 +12,7 @@
         v-model="question.title"
         autofocus
         placeholder="简短描述题目"
+        :disabled="titleReadonly"
       />
     </el-form-item>
     <el-form-item label="问题描述" prop="content">
@@ -53,7 +54,7 @@ function emitQuestionValue() { this.$emit('input', this.question) }
 
 export default {
   components: { MarkdownEditor },
-  props: ['loading', 'loading-text', 'value', 'max-bounty'],
+  props: ['loading', 'loading-text', 'value', 'max-bounty', 'title-readonly'],
   data: () => ({
     question: {
       title: '',

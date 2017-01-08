@@ -16,7 +16,8 @@ export default {
       element: this.$refs.editorTextarea,
       shortcuts: [],
       placeholder: this.placeholder,
-      status: false
+      status: false,
+      spellChecker: false
     })
     this.editor.codemirror.on('inputRead', () => {
       this.$emit('input', this.editor.value())
