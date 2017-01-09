@@ -11,7 +11,7 @@
             v-if="question.bounty > 0"
           > 悬赏：{{ question.bounty }} </el-tag>
         </div>
-        <tags-display :tags="question.tags"/>
+        <tags-display :tags="question.tags" @select="gotoTag"/>
       </div>
       <div class="stats flex-vert">
         <div class="num-answers">回答数：{{ question.numAnswer }}</div>
@@ -26,7 +26,12 @@ import TimeAgo from './TimeAgo'
 import TagsDisplay from './TagsDisplay'
 export default {
   components: { TimeAgo, TagsDisplay },
-  props: ['question']
+  props: ['question'],
+  methods: {
+    gotoTag(tag) {
+      this.$router.push('/#'+tag)
+    }
+  }
 }
 </script>
 

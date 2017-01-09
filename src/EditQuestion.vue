@@ -71,7 +71,7 @@ export default {
       try {
         let {
           status,
-          body: { qid, error }
+          body: { qid, wealth, error }
         } = await this.$agent.post(`/api/question/${this.qid}`)
                   .send({
                     question: this.question,
@@ -79,13 +79,14 @@ export default {
                   })
                   .ok( ({status}) => status === 200 || status === 201 || status === 400 )
         if (status === 200 || status === 201) {
+          this.$store.commit('updateWealth', wealth)
           this.$notify({
             type: 'success',
             title: '问题修改成功',
             message: '即将跳转到问题页面',
-            duration: 0,
+            duration: 3000,
+            onClose: () => this.$router.replace('/question/'+qid)
           })
-          setTimeout( () => this.$router.replace('/question/'+qid), 3000 )
           return
         }
         if (status === 400) {

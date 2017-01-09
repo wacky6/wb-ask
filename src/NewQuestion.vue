@@ -45,7 +45,7 @@ export default {
       try {
         let {
           status,
-          body: { qid, error }
+          body: { qid, wealth, error }
         } = await this.$agent.post('/api/question')
                   .send({
                     question: this.question,
@@ -53,17 +53,17 @@ export default {
                   })
                   .ok( ({status}) => status === 200 || status === 201 || status === 400 )
         if (status === 200 || status === 201) {
-          let delay = 3000
+          this.$store.commit('updateWealth', wealth)
           this.$notify({
             type: 'success',
             title: '问题创建成功',
             message: '即将跳转到问题页面',
-            duration: delay,
+            duration: 3000,
+            onClose: () => {
+              this.resetForm()
+              this.$router.replace('/question/'+qid)
+            }
           })
-          setTimeout( () => {
-            this.resetForm()
-            this.$router.replace('/question/'+qid)
-          }, delay)
           return
         }
         if (status === 400) {

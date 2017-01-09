@@ -2,13 +2,13 @@
   <el-dialog
     title="选择分类"
     ref="dialog"
-    @close="handleClose"
+    @close="close()"
   >
     <tags-display
       v-if="tags && tags.length > 0"
       :tags="tags"
       v-loading="loading"
-      @click="select(tag)"
+      @select="gotoTag"
     />
     <h5 v-else>
       暂无标签
@@ -25,10 +25,10 @@ export default {
     tags: [],
     tag: null
   }),
-  mounted() {
-    this.$on('open', () => {
-      console.log('opened')
-    })
+  created() {
+    // this.$on('open', () => {
+    //   console.log('opened')
+    // })
   },
   methods: {
     async fetchTags() {
@@ -37,12 +37,12 @@ export default {
         let {
           status,
           body
-        } = this.$agent.get('/tag')
+        } = await this.$agent.get('/api/tag')
         if (status === 200) {
-          this.tags = body.tags
+          this.tags = body.list
         }
       }catch(e){
-        this.$alert({
+        this.$notify({
           type: 'warning',
           title: '获取标签失败',
           message: e.message
@@ -51,15 +51,17 @@ export default {
       }
       this.loading = false
     },
-    open(...args) {
-      this.$refs.dialog.open(...args)
+    open() {
+      this.$refs.dialog.open()
       this.fetchTags()
     },
-    handleClose() {
+    close() {
+      this.$refs.dialog.close()
       this.$emit('close', this.tag)
     },
-    select(tag) {
+    gotoTag(tag) {
       this.tag = tag
+      this.close()
     }
   }
 }

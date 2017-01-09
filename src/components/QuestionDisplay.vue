@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="num-of-visits"> 浏览次数：{{ question.numVisit }}</div>
-        <tags-display :tags="question.tags" :click="gotoTag" />
+        <tags-display :tags="question.tags" @select="gotoTag" />
       </div>
       <div class="publisher">
         <user-display :user="question.user" />
@@ -55,7 +55,12 @@ export default {
       gotoTag: (tag) => { this.$router.push('/tag/'+tag) }
     }
   },
-  methods: { marked }
+  methods: {
+    marked,
+    gotoTag(tag) {
+      this.$router.push('/#'+tag)
+    }
+  }
 }
 </script>
 

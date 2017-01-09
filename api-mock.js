@@ -145,13 +145,44 @@ Question.post(  '/question', function*() {
      */
     /*
      * Response: {
-     *     qid: 'question-id'
+     *     qid: 'question-id',
+     *     wealth: 50    // 创建问题后的财富值
      * }
      */
     if (this.request.body.question.title !== 'error') {
         // status
         this.status = 200
-        this.body = { qid: 'created-qid' }
+        this.body = { qid: 'created-qid', wealth: 50 }
+    }else{
+        this.status = 400
+        this.body = { error: 'error message, eg: 问题存在敏感词' }
+    }
+})
+
+Question.post(  '/question/:qid', function*() {
+    // 修改问题
+    // 应忽略 question.title 字段
+    /*
+     * Request: {
+     *     jwt:    'login-token',
+     *     question: {    // 问题信息
+     *         title:   '标题'
+     *         content: '问题正文；目前来说，直接存数据库'
+     *         tags:    ['标签1', '标签2']    // 如果问题没有标签，为空数组: []
+     *         bounty:  100,      //悬赏数
+     *     }
+     * }
+     */
+    /*
+     * Response: {
+     *     qid: 'question-id',
+     *     wealth: 60    // 修改问题后的财富值
+     * }
+     */
+    if (this.request.body.question.title !== 'error') {
+        // status
+        this.status = 200
+        this.body = { qid: 'created-qid', wealth: 60 }
     }else{
         this.status = 400
         this.body = { error: 'error message, eg: 问题存在敏感词' }
@@ -160,7 +191,7 @@ Question.post(  '/question', function*() {
 
 Question.get(  '/question/:qid', function*() {
     // 获取问题，问题浏览次数+1
-    if (this.params.qid !== 404) {
+    if (this.params.qid !== 'error') {
         this.status = 200
         this.body = DATA_QUESTION    // 返回问题json
     } else {
@@ -295,7 +326,7 @@ Question.post(  '/question/:qid/is-best', function*() {
         this.status = 200
         this.body = {
             user: {
-                wealth: 100    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
+                wealth: 20    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
             }
         }
     }else{
@@ -309,7 +340,7 @@ Question.post(  '/question/:qid/close', function*() {
         this.status = 200
         this.body = {
             user: {
-                wealth: 100    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
+                wealth: 10    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
             }
         }
     }else{

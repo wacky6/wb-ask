@@ -4,21 +4,17 @@
       v-for="tag in tags"
       class="tag"
       type="primary"
-      @click.native="tagClick(tag)"
+      @click.native="select(tag)"
     >{{tag}}</el-tag>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['tags', 'click'],
+  props: ['tags'],
   methods: {
-    tagClick(tag) {
-      if (this.click) {
-        this.click(tag)
-      }else{
-        this.$router.push('/#'+tag)
-      }
+    select(tag) {
+      this.$emit('select', tag)
     }
   }
 }

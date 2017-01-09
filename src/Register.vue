@@ -1,66 +1,65 @@
 <template>
   <div class="register">
     <h2>注册</h2>
-    <form>
 
-      <form-field name="邮箱">
+    <el-form
+      class="form"
+      :model="reg"
+      :rules="rules"
+      label-position="right"
+      label-width="96px"
+      ref="form"
+      v-loading="loading"
+      element-loading-text="正在注册"
+    >
+      <el-form-item label="邮箱" prop="email">
         <el-input
-          class="field-input"
-          v-model="email"
+          v-model="reg.email"
+          autofocus
           type="text"
-          placeholder="邮箱"
-          :disabled="disabled"
+          placeholder="请输入常用邮箱"
         />
-      </form-field>
+      </el-form-item>
 
-      <form-field name="密码">
+      <el-form-item label="密码" prop="password">
         <el-input
-          class="field-input"
-          v-model="password"
+          v-model="reg.password"
           type="password"
           placeholder="密码"
-          :disabled="disabled"
         />
-      </form-field>
+      </el-form-item>
 
-      <form-field name="昵称">
+      <el-form-item label="昵称" prop="nickname">
         <el-input
-          class="field-input"
-          v-model="nickname"
+          v-model="reg.nickname"
           type="text"
           placeholder="昵称"
-          autofocus
-          :disabled="disabled"
         />
-      </form-field>
+      </el-form-item>
 
-      <form-field name="真实姓名">
+      <el-form-item label="真实姓名" prop="name">
         <el-input
-          class="field-input"
-          v-model="name"
+          v-model="reg.name"
           type="text"
           placeholder="张三"
-          :disabled="disabled"
         />
-      </form-field>
+      </el-form-item>
 
-      <form-field name="性别">
-        <el-radio-group class="field-input radio flex-horz" v-model="gender">
-          <el-radio label="M" :disabled="disabled">男</el-radio>
-          <el-radio label="F" :disabled="disabled">女</el-radio>
+      <el-form-item label="性别" prop="gender">
+        <el-radio-group class="radio flex-horz" v-model="reg.gender">
+          <el-radio label="M">男</el-radio>
+          <el-radio label="F">女</el-radio>
         </el-radio-group>
-      </form-field>
+      </el-form-item>
 
-      <form-field name="生日">
+      <el-form-item label="性别" prop="birthday">
         <el-date-picker
-          class="field-input"
-          v-model="birthday"
+          v-model="reg.birthday"
           type="date"
+          :picker-options="datePickerOptions"
           placeholder="请选择出生日期"
-          :disabled="disabled"
         />
-      </form-field>
-    </form>
+      </el-form-item>
 
     <div class="controls">
       <!--
@@ -71,30 +70,9 @@
         class="btn register"
         type="success"
         size="large"
-        :loading="busy || registerSuccess"
-        :disabled="!formFilled"
+        :loading="loading"
         @click="register()"
       > 注册 </el-button>
-    </div>
-
-    <div class="flex-horz alert-wrap">
-      <el-alert
-        class="alert"
-        v-if="Boolean(registerError)"
-        type="warning"
-        title="注册失败"
-        :description="registerError"
-        :closable="false"
-        show-icon
-      />
-      <el-alert
-        class="alert"
-        v-if="registerSuccess"
-        type="success"
-        title="注册成功，即将跳转到主页"
-        :closable="false"
-        show-icon
-      />
     </div>
   </div>
 </template>
@@ -105,29 +83,58 @@ import {user, loggedOn} from './global-states.js'
 import EmailValidator from 'email-validator'
 export default {
   components: { FormField },
-  data: () => ({
-    nickname: null,
-    email: null,
-    password: null,
-    passwordVerify: null,
-    name: null,
-    gender: null,
-    birthday: null,
-    busy: false,
-    registerError: null,
-    registerSuccess: false,
-  }),
+  data() {
+    let validateEmail = (r, v, cbk) => {
+      if (EmailValidator.validate(v))
+        cbk()
+      else
+        cbk(new Error('邮箱格式不正确'))
+    }
+    let validateBirthday = (r, v, cbk) => {
+      if (v instanceof Date)
+        cbk()
+      else
+        cbk(new Error('请选择出生日期'))
+    }
+    let rules = {
+      email: [
+        { required: true, message: '请输入邮箱', trigger: 'blur' },
+        { validator: validateEmail, trigger: 'blur' }
+      ],
+      password: [
+        { required: true, message: '请详细描述问题', trigger: 'blur' }
+      ],
+      nickname: [
+        { required: true, message: '请输入昵称', trigger: 'blur' }
+      ],
+      name: [
+        { required: true, message: '请输入真实姓名', trigger: 'blur' }
+      ],
+      gender: [
+        { required: true, message: '请选择性别', trigger: 'change' }
+      ],
+      birthday: [
+        { validator: validateBirthday, trigger: 'change' }
+      ]
+    }
+    return {
+      reg: {
+        email: null,
+        password: null,
+        nickname: null,
+        name: null,
+        gender: null,
+        birthday: null
+      },
+      rules,
+      loading: false,
+      datePickerOptions: {
+        disabledDate: (v) => v.valueOf() >= new Date().valueOf()
+      }
+    }
+  },
   computed: {
     user, loggedOn,
-    disabled() { return this.busy || this.registerSuccess },
-    formFilled() {
-      return this.nickname
-          && EmailValidator.validate(this.email)
-          && this.password
-          && this.name
-          && this.gender === 'M' || this.gender === 'F'
-          && this.birthday
-    }
   },
   watch: {
     loggedOn(val) {
@@ -136,41 +143,64 @@ export default {
     }
   },
   methods: {
-    async register() {
-      this.busy = true
-      let payload = {
-        nickname: this.nickname,
-        email:    this.email,
-        password: this.password,
-        name:     this.name,
-        gender:   this.gender,
-        birthday: String(this.birthday).split('T')[0],
-      }
-      let {
-        status = 0,
-        body
-      } = await this.$agent.post('/api/user')
-                .send(payload)
-                .ok( ({status}) => status !== 500 )
-
-      this.busy = false
-      if (status === 201 || status === 200) {
-        this.registerSuccess = true
-        setTimeout( () => this.$router.replace('/'), 3000 )
-        return
-      } else {
-        this.registerError = body.error || '服务器故障'
-        return
-      }
+    validate() {
+      return new Promise( (resolve) => this.$refs.form.validate( resolve ) )
     },
-    clearFields() {
-      this.nickname = null
-      this.email = null
-      this.password = null
-      this.passwordVerify = null
-      this.name = null
-      this.gender = null
-      this.birthday = null
+    async register() {
+      if ( ! await this.validate() )
+        return
+      this.loading = true
+      let payload = {
+        nickname: this.reg.nickname,
+        email:    this.reg.email,
+        password: this.reg.password,
+        name:     this.reg.name,
+        gender:   this.reg.gender,
+        birthday: this.reg.birthday.toISOString().split('T')[0],
+      }
+      try{
+        let {
+          status = 0,
+          body
+        } = await this.$agent.post('/api/user')
+                  .send(payload)
+                  .ok( ({status}) => status !== 500 )
+        if (status === 201 || status === 200) {
+          this.$notify({
+            type: 'success',
+            title: '注册成功',
+            message: '3秒后跳转到主页',
+            duration: 3000,
+            onClose: () => this.$router.replace('/')
+          })
+          return
+        } else {
+          this.$notify({
+            type: 'warning',
+            title: '注册失败',
+            message: body.error,
+            duration: 0
+          })
+        }
+      } catch(e) {
+        this.$notify({
+          type: 'danger',
+          title: '服务器故障',
+          message: '请稍后再试',
+          duration: 0
+        })
+      }
+      this.loading = false
+    },
+    reset() {
+      this.reg = {
+        email: null,
+        password: null,
+        nickname: null,
+        name: null,
+        gender: null,
+        birthday: null
+      }
     }
   }
 }
@@ -181,12 +211,11 @@ export default {
 .register
   h2
     text-align: center
-  .field
-    .field-name
-      width: 80px
-  .field-input
-    width: 180px
-    &.radio
+
+  .form
+    max-width: 33ch
+    margin: 0 auto
+    .radio
       height: 36px
 
   .controls
