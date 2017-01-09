@@ -43,7 +43,7 @@ export default {
     curPage: 0
   }),
   methods: {
-    async fetchNextPage(query) {
+    async fetchNextPage() {
       try {
         this.loading = true
         let {
@@ -76,11 +76,13 @@ export default {
     }
   },
   async mounted() {
-    this.fetchNextPage()
+    if (this.query)
+      this.fetchNextPage()
   },
   watch: {
     query() {
-      this.reload()
+      if (this.query)
+        this.reload()
     }
   }
 }

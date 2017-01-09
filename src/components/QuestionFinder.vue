@@ -55,6 +55,8 @@ export default {
       let type = this.activeType
       let tag = type === 'tag' ? this.$route.hash.slice(1) : ''
       let order = type === 'bounty' ? 'bounty' : 'latest'
+      if (type.startsWith('my') && !this.loggedOn)
+        return null
       return { type, tag, order }
     },
     activeType() {
@@ -101,6 +103,10 @@ export default {
         this.$refs.menu.activeIndex = this.activeType
       }
     }
+  },
+  created() {
+    if (!this.questionListQuery)
+      this.$router.replace('/')
   }
 }
 </script>

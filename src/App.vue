@@ -103,4 +103,6 @@ body
     .powered-by
       color: #8492A6
       font-size: 7px
+.el-notification
+  z-index: 999999 !important
 </style>

@@ -5,7 +5,7 @@
       v-model="question"
       :loading="loading"
       :loading-text="loadingText"
-      :max-bounty="user ? Number(user).wealth || 0 : 0"
+      :max-bounty="user ? Number(user.wealth) || 0 : 0"
       ref="editor"
     />
 
@@ -53,14 +53,17 @@ export default {
                   })
                   .ok( ({status}) => status === 200 || status === 201 || status === 400 )
         if (status === 200 || status === 201) {
+          let delay = 3000
           this.$notify({
             type: 'success',
             title: '问题创建成功',
             message: '即将跳转到问题页面',
-            duration: 0,
+            duration: delay,
           })
-          this.resetForm()
-          this.setTimeout( () => this.$router.replace('/question/'+qid), 3000 )
+          setTimeout( () => {
+            this.resetForm()
+            this.$router.replace('/question/'+qid)
+          }, delay)
           return
         }
         if (status === 400) {
@@ -81,7 +84,7 @@ export default {
       this.loading = false
     },
     resetForm() {
-      this.$refs.editor.resetFields()
+      this.$refs.editor.reset()
     }
   }
 }

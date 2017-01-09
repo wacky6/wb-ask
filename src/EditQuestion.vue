@@ -7,7 +7,7 @@
       :loading="loading"
       :loading-text="loadingText"
       :title-readonly="true"
-      :max-bounty="user ? Number(user).wealth || 0 : 0"
+      :max-bounty="user ? Number(user.wealth) || 0 : 0"
       ref="editor"
     />
 
@@ -85,8 +85,7 @@ export default {
             message: '即将跳转到问题页面',
             duration: 0,
           })
-          this.resetForm()
-          this.setTimeout( () => this.$router.replace('/question/'+qid), 3000 )
+          setTimeout( () => this.$router.replace('/question/'+qid), 3000 )
           return
         }
         if (status === 400) {
@@ -107,7 +106,7 @@ export default {
       this.loading = false
     },
     resetForm() {
-      this.$refs.editor.resetFields()
+      this.$refs.editor.reset()
     }
   }
 }

@@ -81,6 +81,12 @@ export default {
   methods: {
     validate() {
       return new Promise( (resolve) => this.$refs.form.validate( resolve ) )
+    },
+    reset() {
+      this.question.title = ''
+      this.question.content = ''
+      this.question.tags = []
+      this.question.bounty = 0
     }
   },
   watch: {
@@ -91,10 +97,7 @@ export default {
     value() {
       setTimeout( () => {
         if (!this.value) {
-          this.question.title = ''
-          this.question.content = ''
-          this.question.tags = []
-          this.question.bounty = 0
+          this.reset()
         }else{
           this.question.title = this.value.title
           this.question.content = this.value.content

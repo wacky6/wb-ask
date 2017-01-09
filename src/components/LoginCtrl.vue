@@ -153,15 +153,13 @@ export default {
         })
         console.log(e)
       }
-
-
-
       this.busy = false
     },
     logout() {
       this.$store.commit('logout')
       this.loginPassword = null
       this.menuPopoverVisible = false
+      this.$router.push('/')
     }
   }
 }
