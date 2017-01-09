@@ -9,7 +9,7 @@ import SimpleMDE from 'simplemde'
 import 'simplemde/dist/simplemde.min.css'
 
 export default {
-  props: ['value', 'disabled', 'placeholder'],
+  props: ['value', 'disabled', 'placeholder', 'autofocus'],
   data: () => ({}),
   mounted() {
     this.editor = new SimpleMDE({
@@ -17,7 +17,8 @@ export default {
       shortcuts: [],
       placeholder: this.placeholder,
       status: false,
-      spellChecker: false
+      spellChecker: false,
+      autofocus: this.autofocus
     })
     this.editor.codemirror.on('inputRead', () => {
       this.$emit('input', this.editor.value())

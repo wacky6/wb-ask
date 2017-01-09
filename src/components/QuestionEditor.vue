@@ -19,6 +19,7 @@
       <markdown-editor
         v-model="question.content"
         placeholder="请输入问题正文。支持Markdown语法。"
+        :autofocus="autofocusEditor"
       />
     </el-form-item>
     <el-form-item label="问题标签" prop="tags">
@@ -72,6 +73,11 @@ export default {
     },
     tagList: []
   }),
+  computed: {
+    autofocusEditor() {
+      return false
+    }
+  },
   methods: {
     validate() {
       return new Promise( (resolve) => this.$refs.form.validate( resolve ) )

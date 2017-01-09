@@ -224,7 +224,7 @@ Question.get(  '/question/:qid/answers', function*() {
  *     jwt: 'json-web-token',    // 用户登录token
  * }
  */
-Question.post(  '/question/:qid/:op', function*() {
+Question.post(  '/question/:qid/upvote', function*() {
     if (this.params.qid!=='error') {
         this.status = 200
         this.body = {
@@ -235,6 +235,69 @@ Question.post(  '/question/:qid/:op', function*() {
     }else{
         this.status = 409
         this.body = {}
+    }
+})
+
+Question.post(  '/question/:qid/downvote', function*() {
+    if (this.params.qid!=='error') {
+        this.status = 200
+        this.body = {
+            user: {
+                wealth: 100    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
+            }
+        }
+    }else{
+        this.status = 409
+        this.body = {}
+    }
+})
+
+Question.post(  '/question/:qid/is-best', function*() {
+    if (this.params.qid!=='error') {
+        this.status = 200
+        this.body = {
+            user: {
+                wealth: 100    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
+            }
+        }
+    }else{
+        this.status = 409
+        this.body = {}
+    }
+})
+
+Question.post(  '/question/:qid/close', function*() {
+    if (this.params.qid!=='error') {
+        this.status = 200
+        this.body = {
+            user: {
+                wealth: 100    // 返回操作完成后用户的财富值（eg：最佳答案悬赏返还）
+            }
+        }
+    }else{
+        this.status = 409
+        this.body = {}
+    }
+})
+
+// 回答问题
+/*
+ * qid: 问题的id
+ * Request: {
+ *     answer: {
+ *         content: '回答正文'
+ *     },
+ *     jwt: 'json-web-token',    // 用户登录token
+ * }
+ */
+Question.post(  '/question/:qid/answer', function*() {
+    this.status = 200
+    this.body = {
+        answer: {
+          qid: 'question-id', aid: '99', content: '我的回答', created: new Date().valueOf(), best: false,
+          upvote: 0, downvote: 0, voted: 0,
+          user: { uid: 'my', nickname: '我', email: 'myself@example.com', avatar: 'avatar' }
+        }
     }
 })
 

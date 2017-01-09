@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueScrollTo from 'vue-scroll-to'
 import App from './App'
 import plugins from './our-vue-plugins.js'
 import ElementUI from 'element-ui'
@@ -9,6 +10,7 @@ import 'element-ui/lib/theme-default/index.css'
 import createRouter from './route-config.js'
 
 Vue.use(VueRouter)
+Vue.use(VueScrollTo)
 Vue.use(ElementUI)
 
 // register our plugin bundle

@@ -15,23 +15,56 @@
     </template>
 
     <div v-if="!error">
-      <question-display :question="question">
+      <question-display :question="question" class="question-display">
         <!-- if is self question, insert 关闭问题，修改问题 controls -->
         <div slot="controls" class="controls" v-if="userOwnsQuestion && !question.closed">
           <el-button
             type="warning"
-            size="small"
             icon="more"
+            size="small"
             @click="editQuestion()"
           > 修改问题 </el-button>
           <el-button
             type="danger"
-            size="small"
             icon="close"
+            size="small"
             @click="closeQuestion()"
           > 关闭问题 </el-button>
         </div>
+
+        <div slot="controls" class="controls"  v-if="!userOwnsQuestion && !question.closed">
+          <el-tooltip
+            effect="dark"
+            :content="loggedOn ? '回答问题' : '请先登录'"
+          >
+            <el-button
+              :type="btnAnswerEditorClicked ? 'info' : 'success'"
+              :icon="btnAnswerEditorClicked ? 'minus': 'plus'"
+              size="small"
+              :disabled="!loggedOn"
+              :loading="submittingAnswer"
+              @click="toggleAnswerEditorBtn()"
+            > {{ btnAnswerEditorClicked ? '取消回答' : '回答问题' }} </el-button>
+          </el-tooltip>
+        </div>
       </question-display>
+
+      <transition>
+        <el-card class="answer-editor-wrap" v-if="showAnswerEditor">
+          <answer-editor
+            v-model="newAnswer"
+            :loading="submittingAnswer"
+            ref="answerEditor"
+          />
+          <el-button
+            type="success"
+            size="small"
+            icon="plus"
+            @click="submitAnswer()"
+          > 创建回答 </el-button>
+        </div>
+        </el-card>
+      </transition>
 
       <transition-group class="answers" name="answer" tag="div">
         <answer-display
@@ -51,16 +84,19 @@
 </template>
 
 <script>
-import {user, token} from './global-states'
+import {user, token, loggedOn} from './global-states'
 import QuestionDisplay from './components/QuestionDisplay'
 import AnswerDisplay from './components/AnswerDisplay'
+import AnswerEditor from './components/AnswerEditor'
+import scrollIntoView from 'scroll-into-view'
 
 export default {
-  components: { QuestionDisplay, AnswerDisplay },
+  components: { QuestionDisplay, AnswerDisplay, AnswerEditor },
   props: ['preload-question'],
   computed: {
     user,
     token,
+    loggedOn,
     question() {
       return {
         content: '',
@@ -77,6 +113,9 @@ export default {
     },
     userOwnsQuestion() {
       return this.user && this.user.uid === this.question.user.uid
+    },
+    showAnswerEditor() {
+      return this.loggedOn && this.btnAnswerEditorClicked
     }
   },
   data() {
@@ -87,6 +126,11 @@ export default {
       fetchedQuestion: null,
       fetchedAnswers: [],
       curAnswerPage: 1,
+      submittingAnswer: false,
+      btnAnswerEditorClicked: false,
+      newAnswer: {
+        content: ''
+      }
     }
   },
   methods: {
@@ -221,6 +265,63 @@ export default {
     },
     editQuestion() {
       this.$router.push(`/question/${this.qid}/edit`)
+    },
+    resetAnswer() {
+      this.answer = {
+        content: ''
+      }
+    },
+    async submitAnswer() {
+      let valid = await this.$refs.answerEditor.validate()
+      if ( ! valid ) {
+       return
+      }
+      this.submittingAnswer = true
+      try {
+        let {
+          status,
+          body: { answer, error }
+        } = await this.$agent.post(`/api/question/${this.qid}/answer`)
+                  .send({
+                    answer: this.answer,
+                    jwt: this.token
+                  })
+                  .ok( ({status}) => status === 200 || status === 201 || status === 400 )
+        if (status === 200 || status === 201) {
+          this.$notify({
+            type: 'success',
+            title: '成功创建回答',
+          })
+          this.resetAnswer()
+          this.fetchedAnswers.unshift( answer )
+          // TODO: add scroll behavior
+        }
+        if (status === 400) {
+          this.$notify({
+            type: 'warning',
+            title: '创建回答失败',
+            message: error,
+            duration: 0
+          })
+        }
+      } catch(e) {
+        this.$notify({
+          type: 'error',
+          title: '服务器故障',
+          message: e.message
+        })
+      }
+      this.submittingAnswer = false
+      this.btnAnswerEditorClicked = false
+    },
+    toggleAnswerEditorBtn() {
+      this.btnAnswerEditorClicked = ! this.btnAnswerEditorClicked
+      // TODO: add scroll to behavior
+      // if (this.btnAnswerEditorClicked) {
+      //   setTimeout( () => {
+      //     scrollIntoView(this.$refs.answerEditor)
+      //   }, 0)
+      // }
     }
   },
   async mounted() {
@@ -237,6 +338,8 @@ export default {
   flex-grow: 1
   margin: 0 auto
   max-width: 80ch
+  .controls
+    margin-top: 3em
   .btn.reload
     display: block
     margin-top: 2em
@@ -246,4 +349,6 @@ export default {
     margin-top: 2em
   .answer-move
     transition: transform 1s
+  .question-display
+    margin-bottom: 1em
 </style>
