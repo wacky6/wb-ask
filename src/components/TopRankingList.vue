@@ -7,8 +7,8 @@
       :data="tableData"
       :row-class-name="getRowClassName"
     >
-      <el-table-column prop="nickname" label="用户"/>
-      <el-table-column prop="goodanswer" min-width="20" label="采纳数"/>
+      <el-table-column prop="nickname" class-name="nickname" label="用户"/>
+      <el-table-column prop="goodanswer" class-name="goodanswer" label="采纳数"/>
     </el-table>
   </div>
 </template>
@@ -43,4 +43,8 @@ export default {
 </script>
 
 <style lang="stylus">
+.top-ranking
+  .nickname
+    max-width: 16ch
+    text-overflow: ellipsis;
 </style>

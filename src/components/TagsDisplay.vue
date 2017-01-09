@@ -14,7 +14,11 @@ export default {
   props: ['tags', 'click'],
   methods: {
     tagClick(tag) {
-      this.$router.push('/tag/'+tag)
+      if (this.click) {
+        this.click(tag)
+      }else{
+        this.$router.push('/#'+tag)
+      }
     }
   }
 }

@@ -23,6 +23,25 @@ const DATA_USER = {
     goodanswer: 10     // number of Good answer
 }
 
+const DATA_QUESTION = {
+    qid: 'question-id',
+    title: '问题标题',
+    content: '* 如何调戏星星\n* 如何勾搭星星',
+    tags: ['标签1', '标签2'],
+    numAnswer: 10,  // 回答数
+    numVisit: 1000, // 访问次数
+    closed: false,  // 问题是否关闭
+    solved: false,  // 问题是否解决 （已有最佳答案）
+    bounty: 100,    // 悬赏
+    created: 1483773606376,    // 问题的毫秒时间戳
+    user: {    // 问题发布者的信息
+        uid: 'user_id',
+        nickname: '昵称',
+        email:    'someone@example.com',
+        avatar:   'avatar'
+    }
+}
+
 Users.get(   '/user/:uid', function*() {
     // return user information
     if (this.params.uid) {
@@ -143,27 +162,46 @@ Question.get(  '/question/:qid', function*() {
     // 获取问题，问题浏览次数+1
     if (this.params.qid !== 404) {
         this.status = 200
-        this.body = {
-            qid: 'question-id',
-            title: '问题标题',
-            content: '* 如何调戏星星\n* 如何勾搭星星',
-            tags: ['标签1', '标签2'],
-            numAnswer: 10,  // 回答数
-            numVisit: 1000, // 访问次数
-            closed: false,  // 问题是否关闭
-            solved: false,  // 问题是否解决 （已有最佳答案）
-            bounty: 100,    // 悬赏
-            created: 1483773606376,    // 问题的毫秒时间戳
-            user: {    // 问题发布者的信息
-                uid: 'user_id',
-                nickname: '昵称',
-                email:    'someone@example.com',
-                avatar:   'avatar'
-            }
-        }
+        this.body = DATA_QUESTION    // 返回问题json
     } else {
         this.status = 404
         this.body = {}
+    }
+})
+
+Question.get(  '/question', function*() {
+    // 返回问题列表
+    /*
+     * Query: {
+     *     page:  1            // 分页号
+     *     order: 'latest'     // 筛选方式: latest -> 最新
+     *                                     top -> (点赞 - 差评)最大
+     *                                     bounty -> 悬赏最多
+     *     tag:  ''            // 标签：为空字串 ('') 则返回全部问题
+     *     type: 'solved'      // 筛选：all -> 全部（已解决、未解决）
+     *                                 solved -> 已解决
+     *                                 unsolved -> 未解决
+     *                                 bounty -> 有悬赏
+     *                                 my -> 用户提出的问题
+     *                                 answered -> 用户回答的问题
+     *     jwt: 'user-token'   // 用户的登录token
+     * Response: {
+     *     list: [    // 问题列表
+     *         DATA_QUESTION     // 格式参见 DATA_QUESTION
+     *     ]
+     * }
+     */
+    if (Number(this.query.page) === 1) {
+        this.status = 200
+        this.body = {
+            list: [
+                Object.assign( {}, DATA_QUESTION, {qid: Math.random()} ),
+                Object.assign( {}, DATA_QUESTION, {qid: Math.random()} )
+            ]
+        }
+    } else {
+        // 对应分页没有数据，返回204状态码
+        this.status = 204
     }
 })
 
@@ -298,6 +336,13 @@ Question.post(  '/question/:qid/answer', function*() {
           upvote: 0, downvote: 0, voted: 0,
           user: { uid: 'my', nickname: '我', email: 'myself@example.com', avatar: 'avatar' }
         }
+    }
+})
+
+Question.get(  '/tag', function*() {
+    this.status = 200
+    this.body = {
+        list: [ '标签1', '标签2' ]
     }
 })
 
