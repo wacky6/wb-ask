@@ -1,6 +1,6 @@
 <template>
   <div class="index flex-horz">
-    <question-finder />
+    <question-finder class="question-finder"/>
     <top-ranking-list />
   </div>
 </template>
@@ -21,7 +21,9 @@ export default {
   margin: 0 auto
   align-items: flex-start
   justify-content: space-between
-  .question-list-tabs
+  .question-finder
     min-width: 60ch
+    flex-grow: 1
     margin-right: 8ch
+
 </style>

@@ -3,7 +3,9 @@
     <div class="flex-wrap flex-horz">
       <div class="title-wrap">
         <div class="flex-horz title-line">
-          <h4 class="title">{{question.title}}</h4>
+          <router-link :to="'/question/+question.qid'">
+            <h4 class="title">{{question.title}}</h4>
+          </router-link>
           <el-tag
             type="warning"
             v-if="question.bounty > 0"
@@ -34,6 +36,9 @@ export default {
 .question-list-item
   width: 100%
   margin: 1em 0
+  a, a:visited, a:hover, a:active
+    color: inherit
+    text-decoration: none
   .title-wrap
     flex-grow: 1
   .title-line
