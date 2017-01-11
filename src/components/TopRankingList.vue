@@ -6,8 +6,9 @@
       text="加载中..."
       :data="tableData"
       :row-class-name="getRowClassName"
+      :fit="true"
     >
-      <el-table-column prop="nickname" class-name="nickname" label="用户"/>
+      <el-table-column width="120" prop="nickname" class-name="nickname" label="用户"/>
       <el-table-column prop="goodanswer" class-name="goodanswer" label="采纳数"/>
     </el-table>
   </div>
@@ -49,6 +50,7 @@ export default {
 <style lang="stylus">
 .top-ranking
   .nickname
-    max-width: 16ch
-    text-overflow: ellipsis;
+    .cell
+      text-overflow: ellipsis;
+      white-space: pre
 </style>
