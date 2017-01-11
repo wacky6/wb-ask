@@ -23,7 +23,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://wb-ask-server:8002/',
+        target: 'http://127.0.0.1:8002/',
         changeOrigin: true,
         pathRewrite: { '^/api': '' }
       }
