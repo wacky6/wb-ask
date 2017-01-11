@@ -114,7 +114,7 @@ export default {
         { required: true, message: '请选择性别', trigger: 'change' }
       ],
       birthday: [
-        { validator: validateBirthday, trigger: 'change' }
+        { required: true, validator: validateBirthday, trigger: 'change' }
       ]
     }
     return {
