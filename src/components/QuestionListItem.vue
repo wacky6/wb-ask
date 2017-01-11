@@ -3,7 +3,7 @@
     <div class="flex-wrap flex-horz">
       <div class="title-wrap">
         <div class="flex-horz title-line">
-          <router-link :to="'/question/+question.qid'">
+          <router-link :to="'/question/'+question.qid">
             <h4 class="title">{{question.title}}</h4>
           </router-link>
           <el-tag

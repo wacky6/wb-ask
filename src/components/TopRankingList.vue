@@ -31,13 +31,17 @@ export default {
   },
   async mounted() {
     this.loading = true
-    let {
-      status,
-      body: { list }
-    } = await this.$agent.get('/api/user').query({ condition: 'top', limit: 10 })
+    try {
+        let {
+          status,
+          body: { list }
+        } = await this.$agent.get('/api/user').query({ condition: 'top', limit: 10 })
+        if (status === 200)
+          this.tableData = list
+    } catch(e) {
+        this.tableData = []
+    }
     this.loading = false
-    if (status === 200)
-      this.tableData = list
   }
 }
 </script>

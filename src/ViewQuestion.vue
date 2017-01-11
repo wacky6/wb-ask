@@ -215,7 +215,7 @@ export default {
       }
     },
     async upvote(answer) {
-      let opUpvote = this.$agent.post(`/api/question/${this.qid}/upvote`)
+      let opUpvote = this.$agent.post(`/api/question/${this.qid}/answer/${answer.aid}/upvote`)
                      .send({ jwt: this.token })
       if ( await this.rateAnswer( opUpvote ) ) {
         answer.voted = 1
@@ -223,7 +223,7 @@ export default {
       }
     },
     async downvote(answer) {
-      let opDownvote = this.$agent.post(`/api/question/${this.qid}/downvote`)
+      let opDownvote = this.$agent.post(`/api/question/${this.qid}/answer/${answer.aid}/downvote`)
                        .send({ jwt: this.token })
       if ( await this.rateAnswer( opDownvote ) ) {
         answer.voted = -1
@@ -236,7 +236,7 @@ export default {
       }catch(e){
         return    // user cancelled
       }
-      let opSelectAsBest = this.$agent.post(`/api/question/${this.qid}/is-best`)
+      let opSelectAsBest = this.$agent.post(`/api/question/${this.qid}/answer/${answer.aid}/is-best`)
                            .send({ jwt: this.token, isBest: true })
       if ( await this.rateAnswer( opSelectAsBest ) ) {
         answer.best = true

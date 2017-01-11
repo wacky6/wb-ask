@@ -293,7 +293,7 @@ Question.get(  '/question/:qid/answers', function*() {
  *     jwt: 'json-web-token',    // 用户登录token
  * }
  */
-Question.post(  '/question/:qid/upvote', function*() {
+Question.post(  '/question/:qid/answer/:aid/upvote', function*() {
     if (this.params.qid!=='error') {
         this.status = 200
         this.body = {
@@ -307,7 +307,7 @@ Question.post(  '/question/:qid/upvote', function*() {
     }
 })
 
-Question.post(  '/question/:qid/downvote', function*() {
+Question.post(  '/question/:qid/answer/:aid/downvote', function*() {
     if (this.params.qid!=='error') {
         this.status = 200
         this.body = {
@@ -321,7 +321,7 @@ Question.post(  '/question/:qid/downvote', function*() {
     }
 })
 
-Question.post(  '/question/:qid/is-best', function*() {
+Question.post(  '/question/:qid/answer/:aid/is-best', function*() {
     if (this.params.qid!=='error') {
         this.status = 200
         this.body = {
