@@ -16,29 +16,32 @@
         > 提问 </el-button>
       </el-tooltip>
     </div>
-    <el-menu
-      ref="menu"
-      :default-active="menuActiveItem"
-      class="menu"
-      mode="horizontal"
-      @select="selectType"
-    >
-      <el-submenu index="group1">
-        <template slot="title">{{ titleGroup1 }}</template>
-        <el-menu-item index="all">全部</el-menu-item>
-        <el-menu-item index="solved">已解决</el-menu-item>
-        <el-menu-item index="unsolved">未解决</el-menu-item>
-        <el-menu-item index="bounty">高悬赏</el-menu-item>
-      </el-submenu>
-      <el-submenu index="group2" v-if="loggedOn">
-        <template slot="title">{{ titleGroup2 }}</template>
-        <el-menu-item index="my">我提问的</el-menu-item>
-        <el-menu-item index="my-answer">我回答的</el-menu-item>
-      </el-submenu>
-      <el-menu-item @click.native.prevent="showSelectTag()" index="tag">问题分类</el-menu-item>
-    </el-menu>
-    <tag-select-dialog ref="tagSelectDialog" @close="selectTag" />
-    <question-list :query="questionListQuery" />
+
+    <div class="border-box">
+      <el-menu
+        ref="menu"
+        :default-active="menuActiveItem"
+        class="menu"
+        mode="horizontal"
+        @select="selectType"
+      >
+        <el-submenu index="group1">
+          <template slot="title">{{ titleGroup1 }}</template>
+          <el-menu-item index="all">全部</el-menu-item>
+          <el-menu-item index="solved">已解决</el-menu-item>
+          <el-menu-item index="unsolved">未解决</el-menu-item>
+          <el-menu-item index="bounty">高悬赏</el-menu-item>
+        </el-submenu>
+        <el-submenu index="group2" v-if="loggedOn">
+          <template slot="title">{{ titleGroup2 }}</template>
+          <el-menu-item index="my">我提问的</el-menu-item>
+          <el-menu-item index="my-answer">我回答的</el-menu-item>
+        </el-submenu>
+        <el-menu-item @click.native.prevent="showSelectTag()" index="tag">问题分类</el-menu-item>
+        <tag-select-dialog ref="tagSelectDialog" @close="selectTag" />
+      </el-menu>
+      <question-list :query="questionListQuery" />
+    </div>
   </div>
 </template>
 
