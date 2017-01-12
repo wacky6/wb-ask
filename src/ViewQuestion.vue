@@ -109,10 +109,13 @@ export default {
       return this.$route.params.qid
     },
     bestAnswerSelected() {
-      return this.fetchedAnswers.filter( $ => $.best ).length > 0
+      if (!this.fetchedAnswers)
+        return false
+      else
+        return this.fetchedAnswers.filter( $ => $.best ).length > 0
     },
     userOwnsQuestion() {
-      return this.user && this.user.uid === this.question.user.uid
+      return this.loggedOn && this.user && this.user.email === this.question.user.email
     },
     showAnswerEditor() {
       return this.loggedOn && this.btnAnswerEditorClicked
@@ -175,7 +178,16 @@ export default {
           body: { list: answers }
         } = await this.$agent.get('/api/question/'+qid+'/answers')
         if (status === 200) {
-          this.fetchedAnswers = answers
+          if (! answers) {
+            this.$notify({
+              type: 'warning',
+              title: '获取回答列表失败',
+              message: 'Invalid Response Format'
+            })
+            this.fetchedAnswers = []
+          } else {
+            this.fetchedAnswers = answers
+          }
           this.curAnswerPage = 1
         }
       } catch(e) {
@@ -283,7 +295,7 @@ export default {
           body: { answer, error }
         } = await this.$agent.post(`/api/question/${this.qid}/answer`)
                   .send({
-                    answer: this.answer,
+                    answer: this.newAnswer,
                     jwt: this.token
                   })
                   .ok( ({status}) => status === 200 || status === 201 || status === 400 )
@@ -295,6 +307,7 @@ export default {
           this.resetAnswer()
           this.fetchedAnswers.unshift( answer )
           // TODO: add scroll behavior
+          this.btnAnswerEditorClicked = false
         }
         if (status === 400) {
           this.$notify({
@@ -307,12 +320,11 @@ export default {
       } catch(e) {
         this.$notify({
           type: 'error',
-          title: '服务器故障',
-          message: e.message
+          title: '创建回答失败',
+          message: '服务器故障：'+e.message
         })
       }
       this.submittingAnswer = false
-      this.btnAnswerEditorClicked = false
     },
     toggleAnswerEditorBtn() {
       this.btnAnswerEditorClicked = ! this.btnAnswerEditorClicked

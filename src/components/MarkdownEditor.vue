@@ -28,10 +28,10 @@ export default {
     value(val, old) {
       // update value asynchronously
       // synchronous update cause absurd input cursor behavior
-      setTimeout( () => {
+      this.$nextTick( () => {
         if (this.editor.value() !== val)
           this.editor.value(val || '')
-      }, 0)
+      })
     }
   }
 }

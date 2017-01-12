@@ -44,13 +44,13 @@ export default {
   watch: {
     'answer.content': emitAnswerValue,
     value() {
-      setTimeout( () => {
+      this.$nextTick( () => {
         if (!this.value) {
           this.answer.content = ''
         } else {
           this.answer.content = this.value.content
         }
-      }, 0)
+      } )
     }
   }
 }

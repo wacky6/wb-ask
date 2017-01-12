@@ -66,6 +66,7 @@ export default {
           title: '获取问题失败',
           message: e.message
         })
+        this.loading = false
       }
     },
     reload() {

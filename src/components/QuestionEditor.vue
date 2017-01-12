@@ -95,7 +95,7 @@ export default {
     'question.tags':    emitQuestionValue,
     'question.bounty':  emitQuestionValue,
     value() {
-      setTimeout( () => {
+      this.$nextTick( () => {
         if (!this.value) {
           this.reset()
         }else{
@@ -104,7 +104,7 @@ export default {
           this.question.tags = this.value.tags
           this.question.bounty = this.value.bounty
         }
-      }, 0)
+      })
     }
   }
 }

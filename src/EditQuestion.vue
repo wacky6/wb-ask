@@ -5,7 +5,7 @@
       v-loading="loading"
       v-model="question"
       :loading="loading"
-      :loading-text="loadingText"
+      loading-text="正在载入"
       :title-readonly="true"
       :max-bounty="user ? Number(user.wealth) || 0 : 0"
       ref="editor"
@@ -31,28 +31,29 @@
 
 <script>
 import QuestionEditor from './components/QuestionEditor'
-import {user, token} from './global-states'
+import {user, token, loggedOn} from './global-states'
 
 export default {
   components: { QuestionEditor },
   computed: {
     user,
     token,
-    qid() { return this.$route.params.qid }
+    qid() { return this.$route.params.qid },
+    loggedOn
   },
   data() {
     return {
       loading: false,
-      loadingText: '正在载入问题',
       question: {}
     }
   },
   async mounted() {
+    if ( ! this.loggedOn )
+      return this.$nextTick( () => this.$router.push(`/question/${this.qid}`) )
     await this.fetchQuestion()
   },
   methods: {
     async fetchQuestion() {
-      this.loadingText = '正在载入问题'
       this.loading = true
       let {
         status,
@@ -66,7 +67,6 @@ export default {
       if ( ! valid ) {
         return
       }
-      this.loadingText = '正在修改问题'
       this.loading = true
       try {
         let {
@@ -79,13 +79,14 @@ export default {
                   })
                   .ok( ({status}) => status === 200 || status === 201 || status === 400 )
         if (status === 200 || status === 201) {
-          this.$store.commit('updateWealth', wealth)
+          if (wealth)
+            this.$store.commit('updateWealth', wealth)
           this.$notify({
             type: 'success',
             title: '问题修改成功',
             message: '即将跳转到问题页面',
             duration: 3000,
-            onClose: () => this.$router.replace('/question/'+qid)
+            onClose: () => this.$router.replace('/question/'+this.qid)
           })
           return
         }
